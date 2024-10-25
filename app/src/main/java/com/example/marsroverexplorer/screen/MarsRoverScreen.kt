@@ -1,8 +1,6 @@
 package com.example.marsroverexplorer.screen
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,7 +13,12 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import com.example.marsroverexplorer.R
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.HorizontalPagerIndicator
+import com.google.accompanist.pager.rememberPagerState
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
     val viewModel: MarsRoverViewModel = viewModel()
@@ -28,6 +31,8 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
 
     val photos = viewModel.photos.value
     val error = viewModel.error.collectAsState(initial = null).value
+    val pagerState = rememberPagerState()
+
     Log.d("MarsRoverScreen", "Количество фотографий: ${photos.size}")
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -45,6 +50,7 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                 )
                 Log.e("MarsRoverScreen", "Ошибка загрузки: $error")
             }
+
             loading -> {
                 Text(
                     text = "Загрузка фотографий...",
@@ -53,18 +59,28 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                 )
                 Log.d("MarsRoverScreen", "Фотографии отсутствуют, идет загрузка")
             }
-            else -> {
-                LazyColumn {
-                    items(photos) { photo ->
-                        Log.d("MarsRoverScreen", "URL фотографии: ${photo.img_src}")
 
+            else -> {
+                HorizontalPager(
+                    state = pagerState,
+                    count = photos.size,
+                    modifier = Modifier.weight(1f)
+                ) { page ->
+                    val photo = photos[page]
+                    Log.d("MarsRoverScreen", "URL фотографии: ${photo.img_src}")
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         AsyncImage(
                             model = photo.img_src,
                             contentDescription = photo.earth_date,
                             modifier = Modifier
-                                .padding(8.dp)
                                 .fillMaxWidth()
-                                .height(200.dp),
+                                .height(300.dp),
                             onSuccess = {
                                 Log.d("MarsRoverScreen", "Фото загружено успешно: ${photo.img_src}")
                             },
@@ -75,18 +91,21 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                                 )
                             }
                         )
-                        // Статическое изображение для теста
-                        Image(
-                            painter = painterResource(R.drawable.static_image),
-                            contentDescription = "Static Image",
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxWidth()
-                                .height(200.dp)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Дата: ${photo.earth_date}",
+                            style = MaterialTheme.typography.bodyLarge
                         )
-                        Log.d("MarsRoverScreen", "Фото успешно загружено: ${photo.img_src}")
+                        // Статическое изображение для теста
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
+                HorizontalPagerIndicator(
+                    pagerState = pagerState,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(16.dp)
+                )
             }
         }
     }

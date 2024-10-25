@@ -88,6 +88,9 @@ dependencies {
     kapt ("com.github.bumptech.glide:compiler:4.12.0")
     implementation ("com.google.accompanist:accompanist-coil:0.15.0")
 
+    implementation ("com.google.accompanist:accompanist-pager:0.25.0")
+    implementation ("com.google.accompanist:accompanist-pager-indicators:0.25.0")
+
 
     implementation("io.coil-kt:coil-compose:2.3.0") // Добавление зависимости Coil для Compose
 
