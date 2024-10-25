@@ -22,7 +22,7 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
         loading = false
     }
 
-    val photos = viewModel.photos
+    val photos = viewModel.photos.value
     val error = viewModel.error.collectAsState(initial = null).value
     Log.d("MarsRoverScreen", "Количество фотографий: ${photos.size}") // Логируем количество фотографий
 

@@ -1,6 +1,7 @@
 package com.example.marsroverexplorer.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.marsroverexplorer.Photo
@@ -14,7 +15,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MarsRoverViewModel : ViewModel() {
-    var photos: List<Photo> = listOf()
+    var photos = mutableStateOf<List<Photo>>(emptyList())
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> get() = _error
 
@@ -24,9 +25,9 @@ class MarsRoverViewModel : ViewModel() {
         call.enqueue(object : Callback<RoverResponse> {
             override fun onResponse(call: Call<RoverResponse>, response: Response<RoverResponse>) {
                 if (response.isSuccessful) {
-                    photos = response.body()?.photos ?: emptyList()
+                    photos.value = response.body()?.photos ?: emptyList()
                     _error.update { null }
-                    Log.d("MarsRoverViewModel", "Успешный ответ: количество фотографий = ${photos.size}")
+                    Log.d("MarsRoverViewModel", "Успешный ответ: количество фотографий = ${photos.value.size}")
                 } else {
                     _error.update { "Ошибка: ${response.code()} ${response.message()}" }
                     Log.e("MarsRoverViewModel", "Ошибка ответа: ${response.code()} ${response.message()}")
