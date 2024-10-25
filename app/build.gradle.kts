@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.androidx.room.ktx) // KTX версия Room для удобства использования
     implementation ("androidx.core:core-ktx:1.13.1")
 
+    implementation("io.coil-kt:coil-compose:2.3.0") // Добавление зависимости Coil для Compose
 
     // Тестирование
     testImplementation(libs.junit)  // JUnit для юнит-тестирования
