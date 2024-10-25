@@ -77,6 +77,18 @@ dependencies {
     implementation(libs.androidx.room.ktx) // KTX версия Room для удобства использования
     implementation ("androidx.core:core-ktx:1.13.1")
 
+    implementation ("io.coil-kt:coil:2.1.0")
+    implementation ("io.coil-kt:coil-compose:2.3.0")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    implementation ("com.github.bumptech.glide:compose:1.0.0-alpha.1")
+    kapt ("com.github.bumptech.glide:compiler:4.12.0")
+    implementation ("com.google.accompanist:accompanist-coil:0.15.0")
+
+
     implementation("io.coil-kt:coil-compose:2.3.0") // Добавление зависимости Coil для Compose
 
     // Тестирование

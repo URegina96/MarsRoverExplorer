@@ -1,5 +1,6 @@
 package com.example.marsroverexplorer.api
 
+import com.example.marsroverexplorer.model.RoverResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

@@ -1,4 +1,4 @@
-package com.example.marsroverexplorer
+package com.example.marsroverexplorer.model
 
 data class Photo (
     val id: Int,

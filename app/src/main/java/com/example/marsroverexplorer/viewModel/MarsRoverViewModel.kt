@@ -3,9 +3,8 @@ package com.example.marsroverexplorer.viewModel
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.marsroverexplorer.Photo
-import com.example.marsroverexplorer.api.RoverResponse
+import com.example.marsroverexplorer.model.Photo
+import com.example.marsroverexplorer.model.RoverResponse
 import com.example.marsroverexplorer.retrofit.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
