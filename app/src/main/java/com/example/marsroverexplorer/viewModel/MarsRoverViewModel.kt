@@ -8,6 +8,7 @@ import com.example.marsroverexplorer.api.RoverResponse
 import com.example.marsroverexplorer.retrofit.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,15 +25,17 @@ class MarsRoverViewModel : ViewModel() {
             override fun onResponse(call: Call<RoverResponse>, response: Response<RoverResponse>) {
                 if (response.isSuccessful) {
                     photos = response.body()?.photos ?: emptyList()
-                    _error.value = null
+                    _error.update { null }
+                    Log.d("MarsRoverViewModel", "Успешный ответ: количество фотографий = ${photos.size}")
                 } else {
-                    _error.value = "Ошибка: ${response.code()} ${response.message()}"
+                    _error.update { "Ошибка: ${response.code()} ${response.message()}" }
+                    Log.e("MarsRoverViewModel", "Ошибка ответа: ${response.code()} ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<RoverResponse>, t: Throwable) {
                 Log.e("MarsRoverViewModel", "Ошибка: ${t.message}")
-                _error.value = "Ошибка: ${t.localizedMessage}"
+                _error.update { "Ошибка: ${t.localizedMessage}" }
             }
         })
     }
