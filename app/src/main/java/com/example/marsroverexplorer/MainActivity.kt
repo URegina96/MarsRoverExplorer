@@ -1,26 +1,16 @@
 package com.example.marsroverexplorer
 
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.marsroverexplorer.ui.theme.MarsRoverExplorerTheme
-import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import android.os.Bundle
 
 class MainActivity : ComponentActivity() {
-    private val apiKey: String = "Ключик тут"
+    private val apiKey: String = "EuZkDqT4bbFTeFeVbNHxRc5KuGMCsNXq1edi4lc4" // Замените на ваш действительный API-ключ
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MarsRoverScreen(apiKey)
+            MarsRoverScreen(apiKey, sol = 1000, date = "2024-10-01") // Передаем sol и дату
         }
     }
 }
