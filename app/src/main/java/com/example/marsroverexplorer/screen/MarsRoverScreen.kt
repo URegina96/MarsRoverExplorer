@@ -64,9 +64,17 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                             modifier = Modifier
                                 .padding(8.dp)
                                 .fillMaxWidth()
-                                .height(200.dp)
+                                .height(200.dp),
+                            onSuccess = {
+                                Log.d("MarsRoverScreen", "Фото загружено успешно: ${photo.img_src}")
+                            },
+                            onError = {
+                                Log.e(
+                                    "MarsRoverScreen",
+                                    "Ошибка загрузки изображения: ${it.result.throwable}"
+                                )
+                            }
                         )
-
                         // Статическое изображение для теста
                         Image(
                             painter = painterResource(R.drawable.static_image),
@@ -76,7 +84,6 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                                 .fillMaxWidth()
                                 .height(200.dp)
                         )
-
                         Log.d("MarsRoverScreen", "Фото успешно загружено: ${photo.img_src}")
                     }
                 }
