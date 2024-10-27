@@ -50,7 +50,6 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                 )
                 Log.e("MarsRoverScreen", "Ошибка загрузки: $error")
             }
-
             loading -> {
                 Text(
                     text = "Загрузка фотографий...",
@@ -59,7 +58,6 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                 )
                 Log.d("MarsRoverScreen", "Фотографии отсутствуют, идет загрузка")
             }
-
             else -> {
                 HorizontalPager(
                     state = pagerState,
@@ -68,7 +66,6 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                 ) { page ->
                     val photo = photos[page]
                     Log.d("MarsRoverScreen", "URL фотографии: ${photo.img_src}")
-
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -96,7 +93,6 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                             text = "Дата: ${photo.earth_date}",
                             style = MaterialTheme.typography.bodyLarge
                         )
-                        // Статическое изображение для теста
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }

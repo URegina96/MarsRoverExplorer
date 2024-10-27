@@ -18,7 +18,7 @@ object RetrofitInstance {
         .addInterceptor(logging)
         .connectTimeout(60, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
-        .writeTimeout(60, TimeUnit.SECONDS) // Установим тайм-аут записи
+        .writeTimeout(60, TimeUnit.SECONDS)
         .build()
 
     val api: MarsRoverApi by lazy {
