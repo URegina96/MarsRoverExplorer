@@ -11,6 +11,8 @@ import coil.compose.AsyncImage
 import com.example.marsroverexplorer.viewModel.MarsRoverViewModel
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import com.example.marsroverexplorer.R
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -23,6 +25,9 @@ import com.google.accompanist.pager.rememberPagerState
 fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
     val viewModel: MarsRoverViewModel = viewModel()
     var loading by remember { mutableStateOf(true) }
+    var comments by remember { mutableStateOf(mutableListOf<String>()) }
+    var newComment by remember { mutableStateOf("") }
+    var liked by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.fetchPhotos(apiKey, "Curiosity", sol, date)
@@ -62,7 +67,9 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                 HorizontalPager(
                     state = pagerState,
                     count = photos.size,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 16.dp)
                 ) { page ->
                     val photo = photos[page]
                     Log.d("MarsRoverScreen", "URL фотографии: ${photo.img_src}")
@@ -77,23 +84,49 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                             contentDescription = photo.earth_date,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(300.dp),
-                            onSuccess = {
-                                Log.d("MarsRoverScreen", "Фото загружено успешно: ${photo.img_src}")
-                            },
-                            onError = {
-                                Log.e(
-                                    "MarsRoverScreen",
-                                    "Ошибка загрузки изображения: ${it.result.throwable}"
-                                )
+                                .height(300.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Лайк
+                        IconButton(onClick = {
+                            liked = !liked
+                        }) {
+                            Icon(
+                                painter = painterResource(id = if (liked) R.drawable.ic_liked else R.drawable.ic_like),
+                                contentDescription = "Like",
+                                tint = if (liked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Комментарии
+                        TextField(
+                            value = newComment,
+                            onValueChange = { newComment = it },
+                            label = { Text("Добавить комментарий") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = {
+                            if (newComment.isNotBlank()) {
+                                comments.add(newComment)
+                                newComment = ""
                             }
-                        )
+                        }) {
+                            Text("Отправить")
+                        }
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "Дата: ${photo.earth_date}",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Отображение комментариев
+                        Column {
+                            comments.forEach { comment ->
+                                Text(text = comment, style = MaterialTheme.typography.bodyMedium)
+                            }
+                        }
                     }
                 }
                 HorizontalPagerIndicator(
