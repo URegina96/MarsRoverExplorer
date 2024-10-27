@@ -11,6 +11,7 @@ import coil.compose.AsyncImage
 import com.example.marsroverexplorer.viewModel.MarsRoverViewModel
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -19,15 +20,14 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
     val viewModel: MarsRoverViewModel = viewModel()
     var loading by remember { mutableStateOf(true) }
-    var comments by remember { mutableStateOf(mutableListOf<String>()) }
     var newComment by remember { mutableStateOf("") }
-    var liked by remember { mutableStateOf(false) }
+    val likedStates = remember { mutableStateListOf<Boolean>() }
+    val commentsList = remember { mutableStateListOf<MutableList<String>>() }
 
     LaunchedEffect(Unit) {
         viewModel.fetchPhotos(apiKey, "Curiosity", sol, date)
@@ -38,7 +38,15 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
     val error = viewModel.error.collectAsState(initial = null).value
     val pagerState = rememberPagerState()
 
-    Log.d("MarsRoverScreen", "Количество фотографий: ${photos.size}")
+    // Инициализация состояний лайков и комментариев для каждой фотографии
+    if (likedStates.size != photos.size) {
+        likedStates.clear()
+        commentsList.clear()
+        for (i in photos.indices) {
+            likedStates.add(false)
+            commentsList.add(mutableListOf())
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -53,7 +61,6 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(16.dp)
                 )
-                Log.e("MarsRoverScreen", "Ошибка загрузки: $error")
             }
             loading -> {
                 Text(
@@ -61,7 +68,6 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(16.dp)
                 )
-                Log.d("MarsRoverScreen", "Фотографии отсутствуют, идет загрузка")
             }
             else -> {
                 HorizontalPager(
@@ -72,7 +78,6 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                         .padding(horizontal = 16.dp)
                 ) { page ->
                     val photo = photos[page]
-                    Log.d("MarsRoverScreen", "URL фотографии: ${photo.img_src}")
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -91,12 +96,12 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
 
                         // Лайк
                         IconButton(onClick = {
-                            liked = !liked
+                            likedStates[page] = !likedStates[page]
                         }) {
                             Icon(
-                                painter = painterResource(id = if (liked) R.drawable.ic_liked else R.drawable.ic_like),
+                                painter = painterResource(id = if (likedStates[page]) R.drawable.ic_liked else R.drawable.ic_like),
                                 contentDescription = "Like",
-                                tint = if (liked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                                tint = if (likedStates[page]) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -112,7 +117,7 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(onClick = {
                             if (newComment.isNotBlank()) {
-                                comments.add(newComment)
+                                commentsList[page].add(newComment)
                                 newComment = ""
                             }
                         }) {
@@ -123,8 +128,16 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
 
                         // Отображение комментариев
                         Column {
-                            comments.forEach { comment ->
-                                Text(text = comment, style = MaterialTheme.typography.bodyMedium)
+                            commentsList[page].forEach { comment ->
+                                Text(
+                                    text = comment,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                        .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
+                                        .padding(8.dp)
+                                )
                             }
                         }
                     }
