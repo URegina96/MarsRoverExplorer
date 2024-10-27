@@ -1,5 +1,6 @@
 package com.example.marsroverexplorer.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -9,17 +10,19 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.marsroverexplorer.viewModel.MarsRoverViewModel
-import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.example.marsroverexplorer.R
+import com.example.marsroverexplorer.ui.theme.Purple40
+import com.example.marsroverexplorer.ui.theme.PurpleGrey40
+import com.example.marsroverexplorer.ui.theme.PurpleGrey80
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
+
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
@@ -51,7 +54,7 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "Mars Rover Photos",
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.headlineSmall.copy(color = Purple40), // Цвет заголовка
             modifier = Modifier.padding(16.dp)
         )
         when {
@@ -112,12 +115,19 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                             value = newComment,
                             onValueChange = { newComment = it },
                             label = { Text("Добавить комментарий") },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = TextFieldDefaults.colors(
+                                focusedIndicatorColor = Purple40,
+                                unfocusedIndicatorColor = PurpleGrey40,
+                                disabledIndicatorColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent
+                            )
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(onClick = {
                             if (newComment.isNotBlank()) {
-                                commentsList[page].add(newComment)
+                                commentsList[page].add(":User    $newComment") // Добавляем фейковое имя пользователя
                                 newComment = ""
                             }
                         }) {
@@ -128,14 +138,14 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
 
                         // Отображение комментариев
                         Column {
-                            commentsList[page].forEach { comment ->
+                            commentsList[page].reversed().forEach { comment -> // Отображаем новые комментарии сверху
                                 Text(
                                     text = comment,
-                                    style = MaterialTheme.typography.bodyMedium,
+                                    style = MaterialTheme.typography.bodyMedium.copy(color = PurpleGrey40), // Цвет текста комментария
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
-                                        .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
+                                        .background(PurpleGrey80, RoundedCornerShape(4.dp)) // Фон комментария
                                         .padding(8.dp)
                                 )
                             }
