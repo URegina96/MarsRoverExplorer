@@ -1,5 +1,9 @@
 package com.example.marsroverexplorer.screen
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -22,6 +26,16 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.graphics.drawable.toBitmap
+import coil.imageLoader
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.example.marsroverexplorer.saveImg.saveImageToGallery
+import java.net.URL
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -31,7 +45,7 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
     var newComment by remember { mutableStateOf("") }
     val likedStates = remember { mutableStateListOf<Boolean>() }
     val commentsList = remember { mutableStateListOf<MutableList<String>>() }
-
+    val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         viewModel.fetchPhotos(apiKey, "Curiosity", sol, date)
         loading = false
@@ -54,7 +68,7 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "Mars Rover Photos",
-            style = MaterialTheme.typography.headlineSmall.copy(color = Purple40), // Цвет заголовка
+            style = MaterialTheme.typography.headlineSmall.copy(color = Purple40),
             modifier = Modifier.padding(16.dp)
         )
         when {
@@ -97,6 +111,36 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                         )
                         Spacer(modifier = Modifier.height(16.dp))
 
+                        // Кнопка для сохранения изображения
+                        val context = LocalContext.current
+                        Button(onClick = {
+                            scope.launch {
+                                try {
+                                    // Загрузка изображения с помощью Coil
+                                    val request = ImageRequest.Builder(context)
+                                        .data(photo.img_src)
+                                        .build()
+
+                                    val result = (context.imageLoader.execute(request) as SuccessResult)
+                                    val bitmap = result.drawable.toBitmap() // Преобразование drawable в bitmap
+
+                                    // Сохранение изображения в галерею
+                                    if (bitmap != null) {
+                                        saveImageToGallery(context, bitmap, "MarsRover_${System.currentTimeMillis()}")
+                                        Toast.makeText(context, "Фотография успешно сохранена в галерею!", Toast.LENGTH_LONG).show()
+                                    } else {
+                                        Log.e("MarsRoverScreen", "Не удалось загрузить изображение: bitmap равен null")
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("MarsRoverScreen", "Ошибка при загрузке изображения: ${e.message}")
+                                    Toast.makeText(context, "Ошибка при загрузке изображения: ${e.message}", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }) {
+                            Text("Сохранить в галерею")
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+
                         // Лайк
                         IconButton(onClick = {
                             likedStates[page] = !likedStates[page]
@@ -127,7 +171,7 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(onClick = {
                             if (newComment.isNotBlank()) {
-                                commentsList[page].add(":User    $newComment") // Добавляем фейковое имя пользователя
+                                commentsList[page].add(":User     $newComment") // Добавляем фейковое имя пользователя
                                 newComment = ""
                             }
                         }) {
