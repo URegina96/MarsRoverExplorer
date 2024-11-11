@@ -189,7 +189,10 @@ fun MarsRoverScreen(apiKey: String, sol: Int, date: String?) {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
-                                        .background(PurpleGrey80, RoundedCornerShape(4.dp)) // Фон комментария
+                                        .background(
+                                            PurpleGrey80,
+                                            RoundedCornerShape(4.dp)
+                                        ) // Фон комментария
                                         .padding(8.dp)
                                 )
                             }
