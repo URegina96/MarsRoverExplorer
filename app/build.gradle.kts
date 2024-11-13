@@ -61,7 +61,6 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
-
     implementation(libs.androidx.core.ktx)  // Основная библиотека Android KTX
     implementation(libs.androidx.lifecycle.runtime.ktx)  // Жизненный цикл KTX
     implementation(libs.androidx.activity.compose)  // Поддержка компонентов Activity для Compose
@@ -79,20 +78,15 @@ dependencies {
 
     implementation ("io.coil-kt:coil:2.1.0")
     implementation ("io.coil-kt:coil-compose:2.3.0")
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
 
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation ("com.github.bumptech.glide:compose:1.0.0-alpha.1")
     kapt ("com.github.bumptech.glide:compiler:4.12.0")
-    implementation ("com.google.accompanist:accompanist-coil:0.15.0")
 
+    implementation ("com.google.accompanist:accompanist-coil:0.15.0")
     implementation ("com.google.accompanist:accompanist-pager:0.25.0")
     implementation ("com.google.accompanist:accompanist-pager-indicators:0.25.0")
 
-
-    implementation("io.coil-kt:coil-compose:2.3.0") // Добавление зависимости Coil для Compose
 
     // Тестирование
     testImplementation(libs.junit)  // JUnit для юнит-тестирования

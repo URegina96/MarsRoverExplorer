@@ -12,7 +12,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Log.d("MainActivity", "Setting content")
-            MarsRoverScreen(apiKey, sol = 1000, date = "2024-10-01")
+            MarsRoverScreen(apiKey, sol = 1122, date = "2024-10-01")
         }
     }
 }
